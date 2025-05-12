@@ -62,10 +62,10 @@ const createBusiness = async (req, res) => {
       { folder: 'business_profile' },
       (error, result) => {
         if (error) {
-          console.error('Cloudinary upload error:', error);  // Log the error
+          console.error('Cloudinary upload error:', error);  
           return reject(error);
         }
-        console.log('Cloudinary upload result:', result);  // Log the result
+        console.log('Cloudinary upload result:', result); 
         resolve(result);
       }
     );
@@ -101,17 +101,12 @@ const updateBusiness = async (req, res) => {
       const imageUrls = [];
       for (let file of req.files) {
         const result = await uploadToCloudinary(file.buffer);
-        console.log('Cloudinary result for file:', result);  // Log the result of the upload
-        imageUrls.push(result.secure_url);  // Push the Cloudinary URL to the imageUrls array
+        console.log('Cloudinary result for file:', result);  
+        imageUrls.push(result.secure_url);  
       }
-
-      // Log imageUrls to check if URLs are being populated correctly
       console.log('Uploaded image URLs:', imageUrls);
-
-      // Add images to updated data (check if multiple images are uploaded)
       updatedData.profileImages = imageUrls;
-
-      console.log('Final updatedData:', updatedData);  // Log the final updated data object
+      console.log('Final updatedData:', updatedData);  
     }
 
     // Update Firestore document with the new data
