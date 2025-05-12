@@ -56,65 +56,58 @@ const createBusiness = async (req, res) => {
   }
 };
 
-   const uploadToCloudinary = (buffer) => {
+  const uploadToCloudinary = async (fileBuffer) => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder: 'business_profile' },
+      { folder: 'business_profiles' },
       (error, result) => {
-        if (error) {
-          console.error('Cloudinary upload error:', error);  
-          return reject(error);
-        }
-        console.log('Cloudinary upload result:', result); 
+        if (error) return reject(error);
         resolve(result);
       }
     );
-    streamifier.createReadStream(buffer).pipe(stream);  // Upload the buffer to Cloudinary
+    stream.end(fileBuffer);
   });
 };
 
-const updateBusiness = async (req, res) => {
+
+   const updateBusiness = async (req, res) => {
   try {
-    const { businessId } = req.params;  
+    const { businessId } = req.params;
     const businessRef = db.collection('business').doc(businessId);
-    const businessSnap = await businessRef.get();  
+    const businessSnap = await businessRef.get();
 
     if (!businessSnap.exists) {
       return res.status(404).json({ error: 'Business not found' });
     }
 
+    // Prepare updated fields
+    const fields = ['name', 'email', 'phone', 'address', 'category', 'description', 'website'];
     const updatedData = {};
 
-    // Check the presence of body data and update fields
-    if (req.body.name) updatedData.name = req.body.name;
-    if (req.body.email) updatedData.email = req.body.email;
-    if (req.body.phone) updatedData.phone = req.body.phone;
-    if (req.body.address) updatedData.address = req.body.address;
-    if (req.body.category) updatedData.category = req.body.category;
-    if (req.body.description) updatedData.description = req.body.description;
-    if (req.body.website) updatedData.website = req.body.website;
+    fields.forEach(field => {
+      if (req.body[field]) updatedData[field] = req.body[field];
+    });
 
+    // Timestamp
     updatedData.updatedAt = new Date().toISOString();
 
-    // Handle file upload
-    if (req.files && req.files.length > 0) {
-      const imageUrls = [];
-      for (let file of req.files) {
-        const result = await uploadToCloudinary(file.buffer);
-        console.log('Cloudinary result for file:', result);  
-        imageUrls.push(result.secure_url);  
+    // ✅ Handle single image upload
+    if (req.file) {
+      console.log('Uploading image to Cloudinary...');
+      const result = await uploadToCloudinary(req.file.buffer);
+      console.log('Cloudinary upload result:', result);
+
+      if (result && result.secure_url) {
+        updatedData.profileImages = [result.secure_url]; // Store as array
       }
-      console.log('Uploaded image URLs:', imageUrls);
-      updatedData.profileImages = imageUrls;
-      console.log('Final updatedData:', updatedData);  
     }
 
-    // Update Firestore document with the new data
+    // ✅ Update document in Firestore
     await businessRef.update(updatedData);
 
     return res.status(200).json({
       message: 'Business profile updated successfully',
-      updatedData: updatedData,
+      updatedData,
     });
 
   } catch (error) {
