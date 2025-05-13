@@ -13,6 +13,7 @@ router.put('/business/:businessId',upload.single('image'),businessController.upd
 router.post('/business', upload.single('profileImage'), businessController.createBusiness);
 router.delete('/business/:businessId', businessController.deleteBusiness);
 router.get('/business', businessController.getAllBusinesses);
+router.get('/business/:businessId', businessController.getBusinessById);
 
 // 🔸 Service routes
 router.get('/business/:businessId/services', serviceController.getAllServices);

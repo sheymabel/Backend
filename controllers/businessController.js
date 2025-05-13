@@ -145,18 +145,26 @@ const getAllBusinesses = async (req, res) => {
   }
 };
 
-// ✅ GET BUSINESS ID BY USER UID
-const getBusinessIdByUID = async (uid) => {
-  const snapshot = await db.collection('business')
-    .where('userId', '==', uid)
-    .limit(1)
-    .get();
+// ✅ GET BUSINESS BY ID
+const getBusinessById = async (req, res) => {
+  try {
+    const { businessId } = req.params;
+    const businessRef = db.collection('business').doc(businessId);
+    const businessSnap = await businessRef.get();
 
-  if (snapshot.empty) {
-    throw new Error('No business found for this user');
+    if (!businessSnap.exists) {
+      return res.status(404).json({ error: 'Business not found' });
+    }
+
+    const businessData = {
+      id: businessSnap.id,
+      ...businessSnap.data()
+    };
+
+    res.status(200).json(businessData);
+  } catch (e) {
+    res.status(500).json({ error: 'Error fetching business: ' + e.message });
   }
-
-  return snapshot.docs[0].id;
 };
 
 module.exports = {
@@ -164,5 +172,5 @@ module.exports = {
   updateBusiness,
   deleteBusiness,
   getAllBusinesses,
-  getBusinessIdByUID,
+  getBusinessById
 };
