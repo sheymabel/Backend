@@ -1,8 +1,9 @@
-// Middleware to check if the user is an Admin
-exports.checkAdmin = (req, res, next) => {
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Access Denied: Admins only' });
-    }
-    next();
-  };
-  
+// middleware/checkAdmin.js
+const checkAdmin = (req, res, next) => {
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Forbidden: Admins only' });
+  }
+  next();
+};
+
+module.exports = checkAdmin;

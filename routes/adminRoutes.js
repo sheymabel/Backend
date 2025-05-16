@@ -1,7 +1,10 @@
+// routes/adminRoutes.js
 const express = require('express');
-const adminController = require('../controllers/adminController'); // Make sure the path is correct
-
 const router = express.Router();
+const authenticate = require('../middlewares/authMiddleware');
+const checkAdmin = require('../middlewares/checkAdmin');
+const adminController = require('../controllers/adminController');
+
 
 // Admin Routes
 router.get('/getAllUsers', adminController.getAllUsers);

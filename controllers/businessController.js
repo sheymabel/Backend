@@ -2,7 +2,7 @@ const { db } = require('../config/firebase');
 const upload = require('../middlewares/multer'); // For handling file uploads
 const cloudinary = require('../config/cloudinary');
 const streamifier = require('streamifier');
-
+const multer = require('multer');
 
 
 // 🔎 Validation helper

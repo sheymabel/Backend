@@ -1,4 +1,4 @@
-// middleware/auth.js
+// middleware/authMiddleware.js
 const { admin } = require('../config/firebase');
 
 const authenticate = async (req, res, next) => {
@@ -9,7 +9,7 @@ const authenticate = async (req, res, next) => {
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken; // you can access uid as req.user.uid
+    req.user = decodedToken; // You can access uid via req.user.uid
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Invalid token' });
