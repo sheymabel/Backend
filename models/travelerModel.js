@@ -6,7 +6,6 @@ export class Travler {
       this.name = name;
       this.email = email;
       this.phoneNumber = phoneNumber;
-this.role =  "traveler"; // Default role is 'traveler'
       this.createdAt = createdAt || new Date();
       this.updatedAt = updatedAt || new Date();
     }

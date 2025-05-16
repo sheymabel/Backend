@@ -22,7 +22,6 @@ class Business {
     address,
     description,
     category,
-    role = "business",
     createdAt = new Date(),
   }) {
     this.uid = uid || null;
@@ -32,7 +31,6 @@ class Business {
     this.address = address;
     this.description = description;
     this.category = category;
-    this.role = role; // Default role is 'business'
     this.createdAt = createdAt; // Default to current date
   }
 
@@ -55,6 +53,5 @@ module.exports.BusinessSchema = {
   address: "string",
   description: "string",
   category: Category,
-  role: "'business'",
   createdAt: Timestamp,
 };
